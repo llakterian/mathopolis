@@ -1,0 +1,75 @@
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 20px;
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#math-problem, #building-area {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#equation {
+    font-size: 2em;
+    margin: 15px 0;
+    color: #2c3e50;
+}
+
+#answer-input {
+    font-size: 1.5em;
+    padding: 8px;
+    width: 100px;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+#city-canvas {
+    min-height: 300px;
+    border: 2px dashed #7f8c8d;
+    margin-top: 20px;
+    background-color: #ecf0f1;
+}
+
+.block {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    display: inline-block;
+    cursor: move;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#inventory {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #2ecc71;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+}

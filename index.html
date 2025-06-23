@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathopolis: Build & Brighten!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="math-problem">
+            <h2>Solve to earn blocks!</h2>
+            <div id="equation">3 + 4 = ?</div>
+            <input type="number" id="answer-input">
+            <button id="submit-btn">Submit</button>
+        </div>
+        
+        <div id="building-area">
+            <h2>Build Your City!</h2>
+            <div id="blocks-container">
+                <!-- Blocks will appear here -->
+            </div>
+            <div id="city-canvas"></div>
+        </div>
+        
+        <div id="inventory">
+            <h3>Your Blocks: <span id="block-count">0</span></h3>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
