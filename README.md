@@ -3,7 +3,7 @@ markdown
 
 *A Fun Educational Game for Kids (Ages 4-11)*
 
-![Mathopolis Screenshot](https://i.imgur.com/demo-screenshot.png) *(Replace with actual screenshot URL)*
+![Mathopolis Screenshot](https://imgur.com/a/lQ87fkI)
 
 Transform math practice into an exciting city-building adventure! Solve math problems to earn building blocks and construct your very own colorful city in Mathopolis.
 
