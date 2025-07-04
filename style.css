@@ -1,12 +1,27 @@
+/* Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
 body {
     font-family: 'Comic Sans MS', cursive, sans-serif;
     background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
-    margin: 0;
-    padding: 20px;
     color: #2c3e50;
+    padding: 10px;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes gradient {
@@ -16,142 +31,34 @@ body {
 }
 
 #game-container {
+    flex: 1;
     display: flex;
     flex-direction: column;
     max-width: 800px;
+    width: 100%;
     margin: 0 auto;
     background-color: rgba(255, 255, 255, 0.9);
     border-radius: 20px;
-    padding: 20px;
+    padding: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
 }
 
 h1 {
     color: #e74c3c;
     text-align: center;
-    margin-bottom: 20px;
-    font-size: 2.5em;
+    margin-bottom: 15px;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#math-problem, #building-area {
-    background-color: white;
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-#equation {
-    font-size: 2em;
-    margin: 15px 0;
-    color: #2c3e50;
-    text-align: center;
-}
-
-#answer-input {
-    font-size: 1.5em;
-    padding: 8px;
-    width: 100px;
-    text-align: center;
-    border: 2px solid #3498db;
-    border-radius: 5px;
-}
-
-button {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1.2em;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 10px 5px 0 0;
-    transition: all 0.3s;
-}
-
-button:hover {
-    background-color: #2980b9;
-    transform: scale(1.05);
-}
-
-#minigame-btn {
-    background-color: #9b59b6;
-}
-
-#minigame-btn:hover {
-    background-color: #8e44ad;
-}
-
-#city-canvas {
-    min-height: 300px;
-    border: 2px dashed #7f8c8d;
-    margin-top: 20px;
-    background-color: #ecf0f1;
-    position: relative;
-}
-
-.block {
-    width: 50px;
-    height: 50px;
-    margin: 5px;
-    display: inline-block;
-    cursor: move;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: transform 0.2s;
-}
-
-.block:hover {
-    transform: scale(1.1);
-}
-
-#professor-container {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 100;
-}
-
-#professor {
-    width: 120px;
-    height: auto;
-    animation: bounce 2s infinite;
-}
-
-#speech-bubble {
-    position: absolute;
-    background: white;
-    padding: 10px;
-    border-radius: 10px;
-    width: 160px;
-    left: 130px;
-    top: -20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-#inventory {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #2ecc71;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
+/* Progress Bar */
 #progress-bar {
     width: 100%;
     height: 30px;
     background: #ecf0f1;
     border-radius: 15px;
-    margin: 10px 0 20px;
+    margin: 10px 0 15px;
     position: relative;
     overflow: hidden;
 }
@@ -172,17 +79,165 @@ button:hover {
     transform: translateY(-50%);
     color: black;
     font-weight: bold;
+    font-size: 14px;
 }
 
+#difficulty-level {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+/* Math Problem Section */
+#math-problem, #building-area {
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#equation {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+    margin: 10px 0;
+    color: #2c3e50;
+    text-align: center;
+}
+
+#answer-input {
+    font-size: clamp(1.2rem, 5vw, 1.5rem);
+    padding: 8px;
+    width: 100%;
+    max-width: 120px;
+    text-align: center;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+    display: block;
+    margin: 0 auto;
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: clamp(1rem, 4vw, 1.2rem);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex: 1 1 auto;
+    min-width: 120px;
+    max-width: 200px;
+}
+
+button:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
+
+#minigame-btn {
+    background-color: #9b59b6;
+}
+
+#minigame-btn:hover {
+    background-color: #8e44ad;
+}
+
+/* Building Area */
+#city-canvas {
+    min-height: 200px;
+    height: 300px;
+    border: 2px dashed #7f8c8d;
+    margin-top: 15px;
+    background-color: #ecf0f1;
+    position: relative;
+    overflow: auto;
+    touch-action: manipulation;
+}
+
+.block {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    display: inline-block;
+    cursor: move;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+    touch-action: none;
+}
+
+.block:hover {
+    transform: scale(1.1);
+}
+
+/* Professor Container */
+#professor-container {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    z-index: 100;
+}
+
+#professor {
+    width: 80px;
+    height: auto;
+    animation: bounce 2s infinite;
+}
+
+#speech-bubble {
+    position: absolute;
+    background: white;
+    padding: 8px;
+    border-radius: 10px;
+    width: 140px;
+    left: 90px;
+    top: -15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    font-size: 14px;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Inventory */
+#inventory {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background-color: #2ecc71;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 100;
+    max-width: calc(100% - 20px);
+}
+
+/* Templates */
 .template {
     background: #3498db;
     color: white;
-    padding: 10px;
+    padding: 8px;
     margin: 5px;
     border-radius: 5px;
     cursor: pointer;
     display: inline-block;
     transition: all 0.3s;
+    font-size: 14px;
 }
 
 .template:hover {
@@ -190,6 +245,7 @@ button:hover {
     transform: scale(1.05);
 }
 
+/* Effects */
 .confetti {
     position: fixed;
     width: 10px;
@@ -210,11 +266,13 @@ button:hover {
     transform: translate(-50%, -50%);
     background: rgba(0, 0, 0, 0.8);
     color: white;
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
     z-index: 1000;
-    font-size: 1.5em;
+    font-size: 1.2rem;
     animation: fadeOut 3s forwards;
+    text-align: center;
+    max-width: 90%;
 }
 
 @keyframes fadeOut {
@@ -229,4 +287,86 @@ button:hover {
 
 .night-mode #city-canvas {
     background-color: #2c3e50 !important;
+}
+
+/* Mobile-specific styles */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 5px;
+    }
+
+    #game-container {
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    #professor-container {
+        display: none;
+    }
+
+    #inventory {
+        position: relative;
+        bottom: auto;
+        right: auto;
+        margin: 10px auto;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #city-canvas {
+        min-height: 150px;
+        height: 250px;
+    }
+
+    .block {
+        width: 35px;
+        height: 35px;
+    }
+
+    .button-group {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    button {
+        width: 100%;
+        max-width: none;
+    }
+}
+
+/* Small mobile devices */
+@media screen and (max-width: 480px) {
+    #equation {
+        font-size: 1.3rem;
+    }
+
+    #answer-input {
+        font-size: 1.1rem;
+        max-width: 100px;
+    }
+
+    #city-canvas {
+        height: 200px;
+    }
+
+    .template {
+        font-size: 12px;
+        padding: 6px;
+    }
+}
+
+/* Tablet styles */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    #game-container {
+        max-width: 90%;
+    }
+
+    #professor {
+        width: 100px;
+    }
+
+    #speech-bubble {
+        width: 180px;
+        left: 110px;
+    }
 }

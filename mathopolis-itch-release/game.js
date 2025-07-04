@@ -1,42 +1,9 @@
+
 // Game state
 let blocks = 0;
 let buildingsBuilt = 0;
-let currentEquation = { num1: 0, num2: 0, operation: '+', answer: 0 };
+let currentEquation = { num1: 0, num2: 0, answer: 0 };
 let isDaytime = true;
-let currentDifficulty = 0;
-let correctAnswersCount = 0;
-
-// Game difficulty levels
-const difficultyLevels = [
-    { 
-        name: "Easy", 
-        operations: ['+'], 
-        maxNumber: 10,
-        blocksPerPoint: 1,
-        specialBlockChance: 0.05
-    },
-    { 
-        name: "Medium", 
-        operations: ['+', '-'], 
-        maxNumber: 20,
-        blocksPerPoint: 1.5,
-        specialBlockChance: 0.1
-    },
-    { 
-        name: "Hard", 
-        operations: ['+', '-', '×'], 
-        maxNumber: 30,
-        blocksPerPoint: 2,
-        specialBlockChance: 0.15
-    },
-    { 
-        name: "Expert", 
-        operations: ['+', '-', '×', '÷'], 
-        maxNumber: 50,
-        blocksPerPoint: 2.5,
-        specialBlockChance: 0.2
-    }
-];
 
 // Colors and special blocks
 const colors = ['#e74c3c', '#3498db', '#f1c40f', '#2ecc71', '#9b59b6'];
@@ -75,7 +42,6 @@ const blocksContainer = document.getElementById('blocks-container');
 const cityCanvas = document.getElementById('city-canvas');
 const progressFill = document.getElementById('progress-fill');
 const progressText = document.getElementById('progress-text');
-const difficultyLevelEl = document.getElementById('difficulty-level');
 const minigameBtn = document.getElementById('minigame-btn');
 const unlockedCharactersEl = document.getElementById('unlocked-characters');
 const professorImg = document.getElementById('professor');
@@ -88,52 +54,15 @@ function initGame() {
     updateProgress();
     startDayNightCycle();
     showMessage("Welcome to Mathopolis! Solve math problems to build your city!");
-    updateDifficultyDisplay();
 }
 
-// Update difficulty display
-function updateDifficultyDisplay() {
-    difficultyLevelEl.textContent = `Level: ${difficultyLevels[currentDifficulty].name}`;
-}
-
-// Generate random math problem based on current difficulty
+// Generate random math problem
 function generateNewEquation() {
-    const difficulty = difficultyLevels[currentDifficulty];
-    const operation = difficulty.operations[
-        Math.floor(Math.random() * difficulty.operations.length)
-    ];
+    currentEquation.num1 = Math.floor(Math.random() * 10) + 1;
+    currentEquation.num2 = Math.floor(Math.random() * 10) + 1;
+    currentEquation.answer = currentEquation.num1 + currentEquation.num2;
     
-    let num1, num2, answer;
-    
-    switch(operation) {
-        case '+':
-            num1 = Math.floor(Math.random() * difficulty.maxNumber) + 1;
-            num2 = Math.floor(Math.random() * difficulty.maxNumber) + 1;
-            answer = num1 + num2;
-            break;
-        case '-':
-            num1 = Math.floor(Math.random() * difficulty.maxNumber) + 10;
-            num2 = Math.floor(Math.random() * num1) + 1;
-            answer = num1 - num2;
-            break;
-        case '×':
-            num1 = Math.floor(Math.random() * 10) + 1;
-            num2 = Math.floor(Math.random() * 10) + 1;
-            answer = num1 * num2;
-            break;
-        case '÷':
-            answer = Math.floor(Math.random() * 10) + 1;
-            num2 = Math.floor(Math.random() * 5) + 1;
-            num1 = answer * num2;
-            break;
-    }
-    
-    currentEquation = { num1, num2, operation, answer };
-    
-    // Display the equation with proper symbol
-    const displayOperation = operation === '×' ? '×' : 
-                           operation === '÷' ? '÷' : operation;
-    equationEl.innerHTML = `${num1} ${displayOperation} ${num2} = ?`;
+    equationEl.textContent = `${currentEquation.num1} + ${currentEquation.num2} = ?`;
     answerInput.value = '';
     answerInput.focus();
 }
@@ -145,28 +74,9 @@ function checkAnswer() {
     if (playerAnswer === currentEquation.answer) {
         // Correct answer
         playCorrectSound();
-        correctAnswersCount++;
-        
-        // Calculate blocks based on difficulty
-        const difficulty = difficultyLevels[currentDifficulty];
-        const blocksEarned = Math.max(1, 
-            Math.floor(currentEquation.answer * difficulty.blocksPerPoint)
-        );
-        
-        blocks += blocksEarned;
+        blocks += currentEquation.answer;
         blockCountEl.textContent = blocks;
-        
-        // Create proportional blocks (limited to 10 visual blocks)
-        createNewBlocks(blocksEarned);
-        
-        // Check for difficulty increase
-        if (correctAnswersCount >= 5 && currentDifficulty < difficultyLevels.length - 1) {
-            currentDifficulty++;
-            correctAnswersCount = 0;
-            showMessage(`Level up! Now at ${difficultyLevels[currentDifficulty].name} difficulty!`);
-            updateDifficultyDisplay();
-        }
-        
+        createNewBlocks(currentEquation.answer);
         celebrate();
         generateNewEquation();
         checkUnlocks();
@@ -175,7 +85,7 @@ function checkAnswer() {
         // Random professor comment
         const comments = [
             "Great job!",
-            `You earned ${blocksEarned} blocks!`,
+            "You're amazing!",
             "Math genius!",
             "Keep it up!"
         ];
@@ -188,18 +98,16 @@ function checkAnswer() {
     }
 }
 
-// Create visual blocks as rewards (limited to 10 visual blocks)
+// Create visual blocks as rewards
 function createNewBlocks(count) {
-    const visualBlocks = Math.min(count, 10);
-    const difficulty = difficultyLevels[currentDifficulty];
-    
-    for (let i = 0; i < visualBlocks; i++) {
-        if (Math.random() < difficulty.specialBlockChance) {
+    for (let i = 0; i < count; i++) {
+        // 10% chance for special block
+        if (Math.random() < 0.1) {
             const specialTypes = Object.keys(specialBlocks);
             const specialType = specialTypes[Math.floor(Math.random() * specialTypes.length)];
             createBlock(
                 specialBlocks[specialType].color, 
-                Math.ceil(specialBlocks[specialType].points * (currentDifficulty + 1)),
+                specialBlocks[specialType].points,
                 specialBlocks[specialType].emoji
             );
         } else {
@@ -284,6 +192,7 @@ function setupEventListeners() {
                 blocks -= requiredBlocks;
                 blockCountEl.textContent = blocks;
                 showMessage(`Building a ${template.dataset.shape}...`);
+                // In a full game, this would create the building
                 setTimeout(() => {
                     playBuildSound();
                     buildingsBuilt += requiredBlocks;
