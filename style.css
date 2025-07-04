@@ -332,6 +332,13 @@ button:hover {
         width: 100%;
         max-width: none;
     }
+    #undo-btn {
+    background-color: #e74c3c;
+}
+
+#undo-btn:hover {
+    background-color: #c0392b;
+}
 }
 
 /* Small mobile devices */

@@ -5,6 +5,8 @@ let currentEquation = { num1: 0, num2: 0, operation: '+', answer: 0 };
 let isDaytime = true;
 let currentDifficulty = 0;
 let correctAnswersCount = 0;
+let buildingHistory = []; // Array to store building history for undo
+const MAX_HISTORY_STEPS = 7; // Maximum undo steps
 
 // Game difficulty levels
 const difficultyLevels = [
@@ -80,6 +82,7 @@ const minigameBtn = document.getElementById('minigame-btn');
 const unlockedCharactersEl = document.getElementById('unlocked-characters');
 const professorImg = document.getElementById('professor');
 const speechBubble = document.getElementById('speech-bubble');
+const undoBtn = document.getElementById('undo-btn');
 
 // Initialize game
 function initGame() {
@@ -235,6 +238,31 @@ function createBlock(color, value, emoji) {
     blocksContainer.appendChild(block);
 }
 
+// Undo last building action
+function undoLastAction() {
+    if (buildingHistory.length === 0) {
+        showMessage("Nothing to undo!");
+        return;
+    }
+    
+    const lastAction = buildingHistory.pop();
+    const blocksToRestore = lastAction.value;
+    
+    // Remove the last placed block from city canvas
+    if (lastAction.element && lastAction.element.parentNode === cityCanvas) {
+        cityCanvas.removeChild(lastAction.element);
+    }
+    
+    // Restore blocks to inventory
+    blocks += blocksToRestore;
+    blockCountEl.textContent = blocks;
+    buildingsBuilt = Math.max(0, buildingsBuilt - blocksToRestore);
+    updateProgress();
+    
+    showMessage(`Undo successful! ${blocksToRestore} blocks restored.`);
+    playBuildSound();
+}
+
 // Set up drag and drop for building area
 function setupEventListeners() {
     // Math answer submission
@@ -270,11 +298,21 @@ function setupEventListeners() {
         cityCanvas.appendChild(block);
         playBuildSound();
         buildingsBuilt += value;
+        
+        // Add to history for undo functionality
+        buildingHistory.push({ element: block, value: value });
+        if (buildingHistory.length > MAX_HISTORY_STEPS) {
+            buildingHistory.shift(); // Remove oldest action if we exceed max steps
+        }
+        
         updateProgress();
     });
     
     // Mini-game button
     minigameBtn.addEventListener('click', startMiniGame);
+    
+    // Undo button
+    undoBtn.addEventListener('click', undoLastAction);
     
     // Building templates
     document.querySelectorAll('.template').forEach(template => {
@@ -287,6 +325,13 @@ function setupEventListeners() {
                 setTimeout(() => {
                     playBuildSound();
                     buildingsBuilt += requiredBlocks;
+                    
+                    // Add to history for undo functionality
+                    buildingHistory.push({ value: requiredBlocks });
+                    if (buildingHistory.length > MAX_HISTORY_STEPS) {
+                        buildingHistory.shift();
+                    }
+                    
                     updateProgress();
                 }, 1000);
             } else {
