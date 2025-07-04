@@ -95,8 +95,7 @@ For questions or feedback, please email:
 📩 llakterian@gmail.com
 
 Check out my other projects:
-🔗 GitHub Profile: https://github.com/llakterian/mathopolis
-
+🔗 GitHub Profile: https://github.com/llakterian
 📄 License
 This project is open source and available under the MIT License.
 
