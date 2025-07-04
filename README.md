@@ -102,3 +102,5 @@ Check out my other projects:
 This project is open source and available under the MIT License.
 
 Happy Building! 🏙️✨
+
+"Play is the highest form of research." - Albert Einstein
