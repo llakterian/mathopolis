@@ -1,4 +1,3 @@
-markdown
 # Mathopolis: Build & Brighten! 🏗️✨
 
 *A Fun Educational Game for Kids (Ages 4-11)*
