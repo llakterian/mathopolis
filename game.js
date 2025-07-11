@@ -152,16 +152,18 @@ function generateNewEquation() {
     
     // Scale numbers based on buildings built for progressive difficulty
     const difficultyScale = Math.min(2, 1 + (buildingsBuilt / 100));
+    const scaledMaxNumber = Math.floor(difficulty.maxNumber * difficultyScale);
     
     switch(operation) {
         case '+':
-            num1 = Math.floor(Math.random() * difficulty.maxNumber * difficultyScale) + 1;
-            num2 = Math.floor(Math.random() * difficulty.maxNumber * difficultyScale) + 1;
+            num1 = Math.floor(Math.random() * scaledMaxNumber) + 1;
+            num2 = Math.floor(Math.random() * scaledMaxNumber) + 1;
             answer = num1 + num2;
             break;
         case '-':
-            num1 = Math.floor(Math.random() * difficulty.maxNumber * difficultyScale) + 10;
-            num2 = Math.floor(Math.random() * num1) + 1;
+            // Ensure num1 is always greater than num2 for positive answers
+            num2 = Math.floor(Math.random() * (scaledMaxNumber - 1)) + 1;
+            num1 = Math.floor(Math.random() * (scaledMaxNumber - num2)) + num2 + 1;
             answer = num1 - num2;
             break;
         case '×':
