@@ -5,12 +5,12 @@ let currentEquation = { num1: 0, num2: 0, operation: '+', answer: 0 };
 let isDaytime = true;
 let currentDifficulty = 0;
 let correctAnswersCount = 0;
-let buildingHistory = []; // Array to store building history for undo
-const MAX_HISTORY_STEPS = 7; // Maximum undo steps
+let buildingHistory = [];
+const MAX_HISTORY_STEPS = 7;
 let draggedBlock = null;
 let offsetX, offsetY;
 
-// Game difficulty levels - Updated with more gradual progression
+// Game difficulty levels
 const difficultyLevels = [
     { 
         name: "Beginner", 
@@ -22,7 +22,7 @@ const difficultyLevels = [
     },
     { 
         name: "Easy", 
-        operations: ['+'], 
+        operations: ['+', '-'], 
         maxNumber: 10,
         blocksPerPoint: 1.2,
         specialBlockChance: 0.07,
@@ -51,14 +51,6 @@ const difficultyLevels = [
         blocksPerPoint: 2,
         specialBlockChance: 0.2,
         minBuildings: 50
-    },
-    { 
-        name: "Master", 
-        operations: ['+', '-', '×', '÷'], 
-        maxNumber: 50,
-        blocksPerPoint: 2.5,
-        specialBlockChance: 0.25,
-        minBuildings: 80
     }
 ];
 
@@ -106,6 +98,33 @@ const professorImg = document.getElementById('professor');
 const speechBubble = document.getElementById('speech-bubble');
 const undoBtn = document.getElementById('undo-btn');
 
+// Sound functions with fallback
+function playSound(soundId) {
+    try {
+        const sound = document.getElementById(soundId);
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("Sound playback prevented:", e));
+    } catch (e) {
+        console.log("Sound error:", e);
+    }
+}
+
+function playCorrectSound() {
+    playSound('correct-sound');
+}
+
+function playBuildSound() {
+    playSound('build-sound');
+}
+
+function playUnlockSound() {
+    playSound('unlock-sound');
+}
+
+function playCelebrationSound() {
+    playSound('celebration-sound');
+}
+
 // Initialize game
 function initGame() {
     generateNewEquation();
@@ -114,6 +133,7 @@ function initGame() {
     startDayNightCycle();
     showMessage("Welcome to Mathopolis! Solve math problems to build your city!");
     updateDifficultyDisplay();
+    updateUnlockedCharacters();
 }
 
 // Update difficulty display
@@ -170,6 +190,11 @@ function generateNewEquation() {
 function checkAnswer() {
     const playerAnswer = parseInt(answerInput.value);
     
+    if (isNaN(playerAnswer)) {
+        showMessage("Please enter a number!");
+        return;
+    }
+    
     if (playerAnswer === currentEquation.answer) {
         // Correct answer
         playCorrectSound();
@@ -222,6 +247,9 @@ function createNewBlocks(count) {
     const visualBlocks = Math.min(count, 10);
     const difficulty = difficultyLevels[currentDifficulty];
     
+    // Clear existing blocks
+    blocksContainer.innerHTML = '';
+    
     for (let i = 0; i < visualBlocks; i++) {
         if (Math.random() < difficulty.specialBlockChance) {
             const specialTypes = Object.keys(specialBlocks);
@@ -254,6 +282,7 @@ function createBlock(color, value, emoji) {
     block.addEventListener('dragstart', (e) => {
         e.dataTransfer.setData('text/plain', block.style.backgroundColor);
         e.dataTransfer.setData('value', block.dataset.value);
+        e.dataTransfer.setData('emoji', block.innerHTML);
         setTimeout(() => block.style.opacity = '0.4', 0);
     });
     
@@ -289,6 +318,93 @@ function undoLastAction() {
     playBuildSound();
 }
 
+// Update progress bar
+function updateProgress() {
+    const progress = Math.min(100, buildingsBuilt / 2);
+    progressFill.style.width = `${progress}%`;
+    progressText.textContent = `${Math.floor(progress)}% Built`;
+}
+
+// Show message in speech bubble
+function showMessage(message) {
+    speechBubble.textContent = message;
+    speechBubble.style.animation = 'none';
+    setTimeout(() => {
+        speechBubble.style.animation = '';
+    }, 10);
+}
+
+// Celebrate correct answer
+function celebrate() {
+    playCelebrationSound();
+    
+    // Create confetti
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => {
+            confetti.remove();
+        }, 2000);
+    }
+}
+
+// Check for character unlocks
+function checkUnlocks() {
+    let unlockedNew = false;
+    
+    for (const character of characters) {
+        if (!character.unlocked && buildingsBuilt >= character.requirement) {
+            character.unlocked = true;
+            unlockedNew = true;
+            
+            const unlockDiv = document.createElement('div');
+            unlockDiv.className = 'unlock-message';
+            unlockDiv.innerHTML = `Unlocked: ${character.emoji} ${character.name}!<br>${character.desc}`;
+            document.body.appendChild(unlockDiv);
+            
+            playUnlockSound();
+        }
+    }
+    
+    if (unlockedNew) {
+        updateUnlockedCharacters();
+    }
+}
+
+// Update unlocked characters display
+function updateUnlockedCharacters() {
+    unlockedCharactersEl.innerHTML = '';
+    
+    for (const character of characters) {
+        if (character.unlocked) {
+            const charDiv = document.createElement('div');
+            charDiv.innerHTML = `${character.emoji} ${character.name}`;
+            charDiv.style.margin = '5px';
+            charDiv.style.fontSize = '14px';
+            unlockedCharactersEl.appendChild(charDiv);
+        }
+    }
+}
+
+// Day/night cycle
+function startDayNightCycle() {
+    setInterval(() => {
+        isDaytime = !isDaytime;
+        document.body.classList.toggle('night-mode', !isDaytime);
+        cityCanvas.style.backgroundColor = isDaytime ? '#ecf0f1' : '#2c3e50';
+    }, 30000); // Change every 30 seconds
+}
+
+// Mini-game placeholder
+function startMiniGame() {
+    showMessage("Rainbow Run coming soon! Keep solving math problems for now!");
+}
+
 // Enhanced drag and drop setup for building area
 function setupEventListeners() {
     // Math answer submission
@@ -313,6 +429,15 @@ function setupEventListeners() {
         
         const color = e.dataTransfer.getData('text/plain');
         const value = parseInt(e.dataTransfer.getData('value'));
+        const emoji = e.dataTransfer.getData('emoji');
+        
+        if (blocks < value) {
+            showMessage(`You need ${value} blocks to place this!`);
+            return;
+        }
+        
+        blocks -= value;
+        blockCountEl.textContent = blocks;
         
         const block = document.createElement('div');
         block.className = 'city-block';
@@ -320,6 +445,7 @@ function setupEventListeners() {
         block.style.position = 'absolute';
         block.style.left = `${e.clientX - cityCanvas.getBoundingClientRect().left - 25}px`;
         block.style.top = `${e.clientY - cityCanvas.getBoundingClientRect().top - 25}px`;
+        block.innerHTML = emoji;
         block.draggable = true;
         block.dataset.value = value;
         
@@ -392,5 +518,5 @@ function setupEventListeners() {
     });
 }
 
-// Rest of the functions remain the same...
-// (Mini-game, celebration, progress tracking, character unlocks, etc.)
+// Start the game when the page loads
+window.addEventListener('DOMContentLoaded', initGame);
