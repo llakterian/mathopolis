@@ -152,18 +152,17 @@ function generateNewEquation() {
     
     // Scale numbers based on buildings built for progressive difficulty
     const difficultyScale = Math.min(2, 1 + (buildingsBuilt / 100));
-    const scaledMaxNumber = Math.floor(difficulty.maxNumber * difficultyScale);
     
     switch(operation) {
         case '+':
-            num1 = Math.floor(Math.random() * scaledMaxNumber) + 1;
-            num2 = Math.floor(Math.random() * scaledMaxNumber) + 1;
+            num1 = Math.floor(Math.random() * difficulty.maxNumber * difficultyScale) + 1;
+            num2 = Math.floor(Math.random() * difficulty.maxNumber * difficultyScale) + 1;
             answer = num1 + num2;
             break;
         case '-':
-            // Ensure num1 is always greater than num2 for positive answers
-            num2 = Math.floor(Math.random() * (scaledMaxNumber - 1)) + 1;
-            num1 = Math.floor(Math.random() * (scaledMaxNumber - num2)) + num2 + 1;
+            // Ensure subtraction problems always result in positive numbers
+            num1 = Math.floor(Math.random() * difficulty.maxNumber * difficultyScale) + 1;
+            num2 = Math.floor(Math.random() * num1) + 1;
             answer = num1 - num2;
             break;
         case '×':
@@ -172,6 +171,7 @@ function generateNewEquation() {
             answer = num1 * num2;
             break;
         case '÷':
+            // Ensure division problems result in whole numbers
             answer = Math.floor(Math.random() * 10 * difficultyScale) + 1;
             num2 = Math.floor(Math.random() * 5 * difficultyScale) + 1;
             num1 = answer * num2;
@@ -244,7 +244,7 @@ function checkAnswer() {
     }
 }
 
-// Create visual blocks as rewards (limited to 10 visual blocks)
+// Create visual blocks as rewards (arranged neatly in a grid)
 function createNewBlocks(count) {
     const visualBlocks = Math.min(count, 10);
     const difficulty = difficultyLevels[currentDifficulty];
@@ -252,47 +252,49 @@ function createNewBlocks(count) {
     // Clear existing blocks
     blocksContainer.innerHTML = '';
     
+    // Calculate grid dimensions
+    const cols = Math.ceil(Math.sqrt(visualBlocks));
+    const rows = Math.ceil(visualBlocks / cols);
+    
+    // Set container dimensions based on block count
+    blocksContainer.style.display = 'grid';
+    blocksContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    blocksContainer.style.gap = '5px';
+    blocksContainer.style.justifyItems = 'center';
+    blocksContainer.style.padding = '5px';
+    
     for (let i = 0; i < visualBlocks; i++) {
+        const block = document.createElement('div');
+        block.className = 'block';
+        
+        // Determine if this is a special block
         if (Math.random() < difficulty.specialBlockChance) {
             const specialTypes = Object.keys(specialBlocks);
             const specialType = specialTypes[Math.floor(Math.random() * specialTypes.length)];
-            createBlock(
-                specialBlocks[specialType].color, 
-                Math.ceil(specialBlocks[specialType].points * (currentDifficulty + 1)),
-                specialBlocks[specialType].emoji
-            );
+            block.style.background = specialBlocks[specialType].color;
+            block.dataset.value = Math.ceil(specialBlocks[specialType].points * (currentDifficulty + 1));
+            block.innerHTML = specialBlocks[specialType].emoji;
         } else {
-            createBlock(
-                colors[Math.floor(Math.random() * colors.length)], 
-                1,
-                '⬜'
-            );
+            block.style.background = colors[Math.floor(Math.random() * colors.length)];
+            block.dataset.value = 1;
+            block.innerHTML = '⬜';
         }
+        
+        // Add drag events
+        block.draggable = true;
+        block.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', block.style.backgroundColor);
+            e.dataTransfer.setData('value', block.dataset.value);
+            e.dataTransfer.setData('emoji', block.innerHTML);
+            setTimeout(() => block.style.opacity = '0.4', 0);
+        });
+        
+        block.addEventListener('dragend', () => {
+            block.style.opacity = '1';
+        });
+        
+        blocksContainer.appendChild(block);
     }
-}
-
-// Create a single block
-function createBlock(color, value, emoji) {
-    const block = document.createElement('div');
-    block.className = 'block';
-    block.style.background = color;
-    block.dataset.value = value;
-    block.innerHTML = emoji;
-    block.draggable = true;
-    
-    // Add drag events
-    block.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text/plain', block.style.backgroundColor);
-        e.dataTransfer.setData('value', block.dataset.value);
-        e.dataTransfer.setData('emoji', block.innerHTML);
-        setTimeout(() => block.style.opacity = '0.4', 0);
-    });
-    
-    block.addEventListener('dragend', () => {
-        block.style.opacity = '1';
-    });
-    
-    blocksContainer.appendChild(block);
 }
 
 // Undo last building action
@@ -445,8 +447,19 @@ function setupEventListeners() {
         block.className = 'city-block';
         block.style.background = color;
         block.style.position = 'absolute';
-        block.style.left = `${e.clientX - cityCanvas.getBoundingClientRect().left - 25}px`;
-        block.style.top = `${e.clientY - cityCanvas.getBoundingClientRect().top - 25}px`;
+        
+        // Calculate position to drop the block
+        const rect = cityCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left - 25; // Center the block on cursor
+        const y = e.clientY - rect.top - 25;
+        
+        // Snap to grid for better placement
+        const snapSize = 10;
+        const snappedX = Math.round(x / snapSize) * snapSize;
+        const snappedY = Math.round(y / snapSize) * snapSize;
+        
+        block.style.left = `${Math.max(0, Math.min(snappedX, rect.width - 50))}px`;
+        block.style.top = `${Math.max(0, Math.min(snappedY, rect.height - 50))}px`;
         block.innerHTML = emoji;
         block.draggable = true;
         block.dataset.value = value;
@@ -457,11 +470,13 @@ function setupEventListeners() {
             const rect = block.getBoundingClientRect();
             offsetX = e.clientX - rect.left;
             offsetY = e.clientY - rect.top;
+            block.classList.add('dragging');
             setTimeout(() => block.style.opacity = '0.4', 0);
         });
         
         block.addEventListener('dragend', () => {
             block.style.opacity = '1';
+            block.classList.remove('dragging');
             draggedBlock = null;
         });
         
@@ -482,8 +497,17 @@ function setupEventListeners() {
     cityCanvas.addEventListener('dragover', (e) => {
         e.preventDefault();
         if (draggedBlock) {
-            draggedBlock.style.left = `${e.clientX - cityCanvas.getBoundingClientRect().left - offsetX}px`;
-            draggedBlock.style.top = `${e.clientY - cityCanvas.getBoundingClientRect().top - offsetY}px`;
+            const rect = cityCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left - offsetX;
+            const y = e.clientY - rect.top - offsetY;
+            
+            // Snap to grid while dragging
+            const snapSize = 10;
+            const snappedX = Math.round(x / snapSize) * snapSize;
+            const snappedY = Math.round(y / snapSize) * snapSize;
+            
+            draggedBlock.style.left = `${Math.max(0, Math.min(snappedX, rect.width - 50))}px`;
+            draggedBlock.style.top = `${Math.max(0, Math.min(snappedY, rect.height - 50))}px`;
         }
     });
     
