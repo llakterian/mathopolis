@@ -1,8 +1,8 @@
-# 🏙️ Mathopolis - Build Your Dream City with Math! 
+# 🌊 Mathlantis - The Lost City of Numbers!
 
 <div align="center">
 
-![Mathopolis Banner](https://img.shields.io/badge/Mathopolis-Educational%20Game-brightgreen?style=for-the-badge)
+![Mathlantis Banner](https://img.shields.io/badge/Mathlantis-Educational%20Game-blueviolet?style=for-the-badge)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
@@ -15,36 +15,36 @@
 
 ---
 
-## 🌟 About Mathopolis
+## 🌟 About Mathlantis
 
-Welcome to **Mathopolis** - where mathematics meets creativity! This innovative educational game transforms learning math into an exciting city-building adventure. Solve math problems to earn blocks, then use those blocks to construct your dream metropolis!
+Welcome to **Mathlantis**, a mystical world where numbers are the key to unlocking ancient wonders! This innovative educational game transforms math practice into an epic adventure of discovery and creation. Solve mathematical quests to earn powerful blocks, and use them to rebuild the legendary lost city of Mathlantis.
 
-Perfect for students, educators, and anyone who wants to sharpen their math skills while having fun.
+Perfect for brave adventurers, aspiring scholars, and anyone who wants to make learning math an exciting journey.
 
 ## ✨ Features
 
 ### 🧮 **Progressive Math Learning**
-- **5 Difficulty Levels**: From Beginner to Expert
-- **Multiple Operations**: Addition, Subtraction, Multiplication, Division
-- **Adaptive Difficulty**: Problems scale with your progress
-- **Real-time Feedback**: Instant validation and encouragement
+- **5 Difficulty Levels**: From Beginner to Expert, tailored to your skill level.
+- **Multiple Operations**: Master Addition, Subtraction, Multiplication, and Division.
+- **Adaptive Difficulty**: Challenges grow with you, keeping the adventure exciting.
+- **Real-time Feedback**: Instant encouragement to guide you on your quest.
 
-### 🏗️ **Creative City Building**
-- **Drag & Drop Interface**: Intuitive block placement
-- **Special Blocks**: Rainbow 🌈, Gold ⭐, Diamond 💎 blocks with bonus points
-- **Building Templates**: Pre-designed structures for quick building
-- **Undo System**: Mistake-friendly with 7-step history
+### 🏛️ **Themed World Building**
+- **Unlockable Worlds**: Journey through different eras of Mathlantis, from the Modern City to Ancient Egypt, a Medieval Kingdom, and a Futuristic metropolis!
+- **Unique Templates**: Each world offers exclusive building templates like Pyramids, Castles, and Skyscrapers.
+- **Drag & Drop Interface**: Intuitively place blocks to bring your city to life.
+- **Undo System**: A forgiving 7-step history for creative freedom.
 
-### 🎨 **Immersive Experience**
-- **Day/Night Cycle**: Dynamic environment changes
-- **Sound Effects**: Engaging audio feedback
-- **Celebration Animations**: Confetti rewards for correct answers
-- **Character Unlocks**: Meet the Math Wizard 🧙, Block Robot 🤖, and Rainbow Unicorn 🦄
+### 🎮 **Engaging Gameplay**
+- **Mini-Games (Coming Soon!)**: Each world will feature unique mini-games to test your skills in new ways.
+- **Character Unlocks**: Meet helpful companions like the Math Wizard 🧙 and the Rainbow Unicorn 🦄 as you progress.
+- **Day/Night Cycle**: Experience the beauty of Mathlantis at all hours.
+- **Immersive Audio**: Sound effects and celebration animations make every achievement rewarding.
 
-### 📊 **Progress Tracking**
-- **Visual Progress Bar**: See your city grow
-- **Achievement System**: Unlock characters as you advance
-- **Block Economy**: Earn and spend blocks strategically
+### 🏆 **Social & Customization Features (Coming Soon!)**
+- **Leaderboards**: Compete with friends to see who can build the most magnificent city.
+- **City Showcase**: Share your creations with the world.
+- **Building Skins & Avatar Customization**: Personalize your city and character to reflect your style.
 
 ## 🎮 How to Play
 
