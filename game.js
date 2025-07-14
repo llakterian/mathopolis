@@ -9,6 +9,7 @@ let buildingHistory = [];
 const MAX_HISTORY_STEPS = 7;
 let draggedBlock = null;
 let offsetX, offsetY;
+let currentWorld = 0;
 
 // Game difficulty levels
 const difficultyLevels = [
@@ -73,6 +74,47 @@ const specialBlocks = {
         emoji: '💎'
     }
 };
+
+// Themed Worlds
+const worlds = [
+    {
+        name: "Modern City",
+        minBuildings: 0,
+        unlocked: true,
+        templates: [
+            { shape: "house", blocks: 10, icon: "fas fa-home" },
+            { shape: "tower", blocks: 15, icon: "fas fa-building" },
+            { shape: "castle", blocks: 20, icon: "fas fa-chess-rook" }
+        ]
+    },
+    {
+        name: "Ancient Egypt",
+        minBuildings: 100,
+        unlocked: false,
+        templates: [
+            { shape: "pyramid", blocks: 25, icon: "fas fa-landmark" },
+            { shape: "sphinx", blocks: 30, icon: "fas fa-monument" }
+        ]
+    },
+    {
+        name: "Medieval Kingdom",
+        minBuildings: 250,
+        unlocked: false,
+        templates: [
+            { shape: "cathedral", blocks: 35, icon: "fas fa-church" },
+            { shape: "fortress", blocks: 40, icon: "fas fa-fort-awesome" }
+        ]
+    },
+    {
+        name: "Futuristic City",
+        minBuildings: 500,
+        unlocked: false,
+        templates: [
+            { shape: "skyscraper", blocks: 50, icon: "fas fa-rocket" },
+            { shape: "biodome", blocks: 60, icon: "fas fa-globe" }
+        ]
+    }
+];
 
 // Unlockable characters
 const characters = [
@@ -357,10 +399,11 @@ function celebrate() {
     }
 }
 
-// Check for character unlocks
+// Check for character and world unlocks
 function checkUnlocks() {
     let unlockedNew = false;
     
+    // Check for character unlocks
     for (const character of characters) {
         if (!character.unlocked && buildingsBuilt >= character.requirement) {
             character.unlocked = true;
@@ -370,8 +413,25 @@ function checkUnlocks() {
             unlockDiv.className = 'unlock-message';
             unlockDiv.textContent = `Unlocked: ${character.emoji} ${character.name}! ${character.desc}`;
             document.body.appendChild(unlockDiv);
+
+            playUnlockSound();
+        }
+    }
+
+    // Check for world unlocks
+    for (let i = 0; i < worlds.length; i++) {
+        if (!worlds[i].unlocked && buildingsBuilt >= worlds[i].minBuildings) {
+            worlds[i].unlocked = true;
+            currentWorld = i;
+            unlockedNew = true;
+
+            const unlockDiv = document.createElement('div');
+            unlockDiv.className = 'unlock-message';
+            unlockDiv.textContent = `Unlocked World: ${worlds[i].name}!`;
+            document.body.appendChild(unlockDiv);
             
             playUnlockSound();
+            updateBuildingTemplates();
         }
     }
     
@@ -406,7 +466,51 @@ function startDayNightCycle() {
 
 // Mini-game placeholder
 function startMiniGame() {
-    showMessage("Rainbow Run coming soon! Keep solving math problems for now!");
+    const world = worlds[currentWorld];
+    showMessage(`${world.name} mini-game coming soon! Keep solving math problems for now!`);
+}
+
+// Update building templates based on current world
+function updateBuildingTemplates() {
+    const templatesContainer = document.getElementById('building-templates');
+    templatesContainer.innerHTML = '';
+
+    const world = worlds[currentWorld];
+
+    for (const template of world.templates) {
+        const templateDiv = document.createElement('div');
+        templateDiv.className = 'template';
+        templateDiv.dataset.shape = template.shape;
+        templateDiv.dataset.blocks = template.blocks;
+        templateDiv.innerHTML = `<i class="${template.icon}"></i> ${template.shape} (${template.blocks})`;
+        templatesContainer.appendChild(templateDiv);
+    }
+
+    // Re-add event listeners for new templates
+    document.querySelectorAll('.template').forEach(template => {
+        template.addEventListener('click', () => {
+            const requiredBlocks = parseInt(template.dataset.blocks);
+            if (blocks >= requiredBlocks) {
+                blocks -= requiredBlocks;
+                blockCountEl.textContent = blocks;
+                showMessage(`Building a ${template.dataset.shape}...`);
+                setTimeout(() => {
+                    playBuildSound();
+                    buildingsBuilt += requiredBlocks;
+
+                    // Add to history for undo functionality
+                    buildingHistory.push({ value: requiredBlocks });
+                    if (buildingHistory.length > MAX_HISTORY_STEPS) {
+                        buildingHistory.shift();
+                    }
+
+                    updateProgress();
+                }, 1000);
+            } else {
+                showMessage(`You need ${requiredBlocks - blocks} more blocks!`);
+            }
+        });
+    });
 }
 
 // Enhanced drag and drop setup for building area
@@ -416,6 +520,11 @@ function setupEventListeners() {
     answerInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') checkAnswer();
     });
+
+    // Social and customization buttons
+    document.getElementById('leaderboard-btn').addEventListener('click', () => showMessage("Leaderboards coming soon!"));
+    document.getElementById('city-showcase-btn').addEventListener('click', () => showMessage("City Showcase coming soon!"));
+    document.getElementById('customize-btn').addEventListener('click', () => showMessage("Customization coming soon!"));
     
     // Building area drop zone
     cityCanvas.addEventListener('dragover', (e) => {
@@ -517,31 +626,8 @@ function setupEventListeners() {
     // Undo button
     undoBtn.addEventListener('click', undoLastAction);
     
-    // Building templates
-    document.querySelectorAll('.template').forEach(template => {
-        template.addEventListener('click', () => {
-            const requiredBlocks = parseInt(template.dataset.blocks);
-            if (blocks >= requiredBlocks) {
-                blocks -= requiredBlocks;
-                blockCountEl.textContent = blocks;
-                showMessage(`Building a ${template.dataset.shape}...`);
-                setTimeout(() => {
-                    playBuildSound();
-                    buildingsBuilt += requiredBlocks;
-                    
-                    // Add to history for undo functionality
-                    buildingHistory.push({ value: requiredBlocks });
-                    if (buildingHistory.length > MAX_HISTORY_STEPS) {
-                        buildingHistory.shift();
-                    }
-                    
-                    updateProgress();
-                }, 1000);
-            } else {
-                showMessage(`You need ${requiredBlocks - blocks} more blocks!`);
-            }
-        });
-    });
+// Initial template setup
+    updateBuildingTemplates();
 }
 
 // Start the game when the page loads
