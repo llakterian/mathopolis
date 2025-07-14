@@ -131,7 +131,7 @@ function initGame() {
     setupEventListeners();
     updateProgress();
     startDayNightCycle();
-    showMessage("Welcome to Mathopolis! Solve math problems to build your city!");
+    showMessage("Welcome to Mathlantis! Solve math problems to build your city!");
     updateDifficultyDisplay();
     updateUnlockedCharacters();
 }
@@ -183,7 +183,7 @@ function generateNewEquation() {
     // Display the equation with proper symbol
     const displayOperation = operation === '×' ? '×' : 
                            operation === '÷' ? '÷' : operation;
-    equationEl.innerHTML = `${num1} ${displayOperation} ${num2} = ?`;
+    equationEl.textContent = `${num1} ${displayOperation} ${num2} = ?`;
     answerInput.value = '';
     answerInput.focus();
 }
@@ -273,11 +273,11 @@ function createNewBlocks(count) {
             const specialType = specialTypes[Math.floor(Math.random() * specialTypes.length)];
             block.style.background = specialBlocks[specialType].color;
             block.dataset.value = Math.ceil(specialBlocks[specialType].points * (currentDifficulty + 1));
-            block.innerHTML = specialBlocks[specialType].emoji;
+            block.textContent = specialBlocks[specialType].emoji;
         } else {
             block.style.background = colors[Math.floor(Math.random() * colors.length)];
             block.dataset.value = 1;
-            block.innerHTML = '⬜';
+            block.textContent = '⬜';
         }
         
         // Add drag events
@@ -368,7 +368,7 @@ function checkUnlocks() {
             
             const unlockDiv = document.createElement('div');
             unlockDiv.className = 'unlock-message';
-            unlockDiv.innerHTML = `Unlocked: ${character.emoji} ${character.name}!<br>${character.desc}`;
+            unlockDiv.textContent = `Unlocked: ${character.emoji} ${character.name}! ${character.desc}`;
             document.body.appendChild(unlockDiv);
             
             playUnlockSound();
@@ -387,7 +387,7 @@ function updateUnlockedCharacters() {
     for (const character of characters) {
         if (character.unlocked) {
             const charDiv = document.createElement('div');
-            charDiv.innerHTML = `${character.emoji} ${character.name}`;
+            charDiv.textContent = `${character.emoji} ${character.name}`;
             charDiv.style.margin = '5px';
             charDiv.style.fontSize = '14px';
             unlockedCharactersEl.appendChild(charDiv);
@@ -460,7 +460,7 @@ function setupEventListeners() {
         
         block.style.left = `${Math.max(0, Math.min(snappedX, rect.width - 50))}px`;
         block.style.top = `${Math.max(0, Math.min(snappedY, rect.height - 50))}px`;
-        block.innerHTML = emoji;
+        block.textContent = emoji;
         block.draggable = true;
         block.dataset.value = value;
         
